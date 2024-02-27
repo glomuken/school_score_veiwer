@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Data</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f0f0; /* Light gray background */
+            color: #333; /* Dark gray text color */
+            font-family: Arial, sans-serif; /* Use a sans-serif font */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+        }
+
+        header {
+            background-color: #7FFF00; /* Green header background color */
+            padding: 20px; /* Add padding to the header */
+            position: fixed; /* Fixed position */
+            left: 0; /* Align to the left */
+            top: 0; /* Align to the top */
+            right: 0; /* Align to the right */
+        }
+
+        h1 {
+            color: #006400; /* Dark green header text color */
+            margin-top: 0; /* Remove default margin from h1 */
+        }
+
+        .container {
+            margin-top: 120px; /* Add margin to create space between header and content */
+            align: left;
+            margin-left: 0;
+        }
+
+        footer {
+            background-color: #7FFF00; /* Green background color for the footer */
+            color: #fff; /* White text color for the footer */
+            padding: 10px; /* Add padding to the footer */
+            text-align: center; /* Center-align text within the footer */
+            position: fixed; /* Fixed position at the bottom of the viewport */
+            left: 0; /* Align footer to the left edge */
+            bottom: 0; /* Align footer to the bottom of the viewport */
+            width: 100%; /* Full width */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>School Data</h1>
+    </header>
+
+    <div class="container">
+        <input type="text" id="searchInput" onkeyup="searchData()" placeholder="Search...">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>DBN</th>
+                    <th>DISTRICT</th>
+                    <th>SCHOOL</th>
+                    <th>GRADE</th>
+                    <th>OVERALL SCORE</th>
+                    <th>ENVIRONMENT CATEGORY SCORE</th>
+                    <th>PERFORMANCE CATEGORY SCORE</th>
+                    <th>PROGRESS CATEGORY SCORE</th>
+                    <th>ADDITIONAL CREDIT</th>
+                    <th>QUALITY REVIEW SCORE</th>
+                </tr>
+            </thead>
+            <tbody id="schoolData">
+                <!-- Data will be inserted here dynamically -->
+            </tbody>
+        </table>
+    </div>
+    
+    <footer>
+        © 2024 School Data Viewer
+    </footer>
+    
+    <!-- Bootstrap JS and jQuery (optional, for Bootstrap components that require it) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Function to fetch data from the server and display it
+        function fetchData() {
+            fetch('/fetch-data') // Assuming server route to fetch data
+                .then(response => response.json())
+                .then(data => {
+                    const schoolData = document.getElementById('schoolData');
+                    schoolData.innerHTML = ''; // Clear previous data
+                    data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${row.DBN}</td>
+                            <td>${row.DISTRICT}</td>
+                            <td>${row.SCHOOL}</td>
+                            <td>${row.GRADE}</td>
+                            <td>${row.OVERALL_SCORE}</td>
+                            <td>${row.ENVIRONMENT_CATEGORY_SCORE}</td>
+                            <td>${row.PERFORMANCE_CATEGORY_SCORE}</td>
+                            <td>${row.PROGRESS_CATEGORY_SCORE}</td>
+                            <td>${row.ADDITIONAL_CREDIT}</td>
+                            <td>${row.QUALITY_REVIEW_SCORE}</td>
+                        `;
+                        schoolData.appendChild(tr);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        // Call fetchData function when the page loads
+        fetchData();
+
+        // Function to search data in the table
+        function searchData() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toUpperCase();
+            const table = document.querySelector('.table');
+            const rows = table.getElementsByTagName('tr');
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                let found = false;
+                for (let j = 0; j < cells.length; j++) {
+                    const cellText = cells[j].textContent.toUpperCase() || cells[j].innerText.toUpperCase();
+                    if (cellText.indexOf(filter) > -1) {
+                        found = true;
+                        break;
+                    }
+                }
+                rows[i].style.display = found ? '' : 'none';
+            }
+        }
+    </script>
+</body>
+</html>
